@@ -4,22 +4,52 @@ const pool = require('../db');
 const { askAI } = require('../services/ai');
 
 // GET /api/events
+// Supports pagination via ?page=1&limit=20, search via ?search=, and filtering via ?category=
 router.get('/', async (req, res) => {
   try {
-    const { search, category } = req.query;
-    let query = 'SELECT * FROM events ORDER BY event_date ASC';
+    const { search, category, page, limit } = req.query;
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 50));
+    const offset = (pageNum - 1) * limitNum;
+
+    let conditions = [];
     let params = [];
+    let paramIdx = 1;
 
     if (search) {
-      query = `SELECT * FROM events WHERE title ILIKE $1 OR description ILIKE $1 ORDER BY event_date ASC`;
-      params = [`%${search}%`];
-    } else if (category) {
-      query = 'SELECT * FROM events WHERE category = $1 ORDER BY event_date ASC';
-      params = [category];
+      conditions.push(`(title ILIKE $${paramIdx} OR description ILIKE $${paramIdx})`);
+      params.push(`%${search}%`);
+      paramIdx++;
+    }
+    if (category) {
+      conditions.push(`category = $${paramIdx++}`);
+      params.push(category);
     }
 
-    const result = await pool.query(query, params);
-    res.json(result.rows);
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    // If no pagination params, return all records (legacy behaviour)
+    if (!page && !limit) {
+      const result = await pool.query(`SELECT * FROM events ${whereClause} ORDER BY event_date ASC`, params);
+      return res.json(result.rows);
+    }
+
+    const dataParams = [...params, limitNum, offset];
+    const [dataResult, countResult] = await Promise.all([
+      pool.query(`SELECT * FROM events ${whereClause} ORDER BY event_date ASC LIMIT $${paramIdx} OFFSET $${paramIdx + 1}`, dataParams),
+      pool.query(`SELECT COUNT(*) FROM events ${whereClause}`, params)
+    ]);
+
+    const total = parseInt(countResult.rows[0].count);
+    res.json({
+      data: dataResult.rows,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum)
+      }
+    });
   } catch (err) {
     console.error('Error fetching events:', err);
     res.status(500).json({ error: 'Failed to fetch events' });

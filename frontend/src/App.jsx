@@ -14,6 +14,11 @@ import Attendance from './pages/Attendance';
 import SmallGroups from './pages/SmallGroups';
 import Counseling from './pages/Counseling';
 import Outreach from './pages/Outreach';
+import AITools from './pages/AITools';
+import AIResults from './pages/AIResults';
+import Notifications from './pages/Notifications';
+import Reports from './pages/Reports';
+import Webhooks from './pages/Webhooks';
 import Layout from './components/Layout';
 
 function ProtectedRoute({ children }) {
@@ -42,6 +47,11 @@ function App() {
         <Route path="/small-groups" element={<ProtectedRoute><SmallGroups /></ProtectedRoute>} />
         <Route path="/counseling" element={<ProtectedRoute><Counseling /></ProtectedRoute>} />
         <Route path="/outreach" element={<ProtectedRoute><Outreach /></ProtectedRoute>} />
+        <Route path="/ai-tools" element={<ProtectedRoute><AITools /></ProtectedRoute>} />
+        <Route path="/ai-results" element={<ProtectedRoute><AIResults /></ProtectedRoute>} />
+        <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+        <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+        <Route path="/webhooks" element={<ProtectedRoute><Webhooks /></ProtectedRoute>} />
       </Routes>
     </div>
   );

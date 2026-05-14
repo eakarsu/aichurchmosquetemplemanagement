@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const { askAI } = require('../services/ai');
+const { saveAIResult, DEFAULT_MODEL } = require('../lib/aiHelpers');
 
 // GET /api/members/stats/summary
 router.get('/stats/summary', async (req, res) => {
@@ -28,21 +29,56 @@ router.get('/stats/summary', async (req, res) => {
 });
 
 // GET /api/members
+// Supports pagination via ?page=1&limit=20 and search via ?search=term
 router.get('/', async (req, res) => {
   try {
-    const { search } = req.query;
-    let query = 'SELECT * FROM members ORDER BY last_name, first_name';
+    const { search, page, limit } = req.query;
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 50));
+    const offset = (pageNum - 1) * limitNum;
+
+    let baseQuery;
+    let countQuery;
     let params = [];
 
     if (search) {
-      query = `SELECT * FROM members WHERE
+      baseQuery = `SELECT * FROM members WHERE
         first_name ILIKE $1 OR last_name ILIKE $1 OR email ILIKE $1
-        ORDER BY last_name, first_name`;
-      params = [`%${search}%`];
+        ORDER BY last_name, first_name
+        LIMIT $2 OFFSET $3`;
+      countQuery = `SELECT COUNT(*) FROM members WHERE
+        first_name ILIKE $1 OR last_name ILIKE $1 OR email ILIKE $1`;
+      params = [`%${search}%`, limitNum, offset];
+    } else {
+      baseQuery = 'SELECT * FROM members ORDER BY last_name, first_name LIMIT $1 OFFSET $2';
+      countQuery = 'SELECT COUNT(*) FROM members';
+      params = [limitNum, offset];
     }
 
-    const result = await pool.query(query, params);
-    res.json(result.rows);
+    // If no pagination params requested, return all records (legacy behaviour)
+    if (!page && !limit) {
+      const noPageQuery = search
+        ? `SELECT * FROM members WHERE first_name ILIKE $1 OR last_name ILIKE $1 OR email ILIKE $1 ORDER BY last_name, first_name`
+        : 'SELECT * FROM members ORDER BY last_name, first_name';
+      const result = await pool.query(noPageQuery, search ? [`%${search}%`] : []);
+      return res.json(result.rows);
+    }
+
+    const [dataResult, countResult] = await Promise.all([
+      pool.query(baseQuery, params),
+      pool.query(countQuery, search ? [`%${search}%`] : [])
+    ]);
+
+    const total = parseInt(countResult.rows[0].count);
+    res.json({
+      data: dataResult.rows,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum)
+      }
+    });
   } catch (err) {
     console.error('Error fetching members:', err);
     res.status(500).json({ error: 'Failed to fetch members' });
@@ -142,6 +178,14 @@ router.post('/ai-engagement', async (req, res) => {
     const prompt = `Analyze the following member data and suggest personalized engagement strategies to increase participation and community connection:\n\n${membersInfo}`;
 
     const suggestions = await askAI(prompt, systemPrompt);
+    await saveAIResult(pool, {
+      user_id: req.user?.id,
+      feature: 'member-engagement-suggestions',
+      input: { has_member_data: !!member_data },
+      output: { suggestions },
+      raw_text: suggestions,
+      model: DEFAULT_MODEL,
+    });
     res.json({ suggestions });
   } catch (err) {
     console.error('Error generating engagement suggestions:', err);

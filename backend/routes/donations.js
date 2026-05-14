@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const { askAI } = require('../services/ai');
+const { saveAIResult, DEFAULT_MODEL } = require('../lib/aiHelpers');
 
 // GET /api/donations/stats/summary
 router.get('/stats/summary', async (req, res) => {
@@ -30,10 +31,51 @@ router.get('/stats/summary', async (req, res) => {
 });
 
 // GET /api/donations
+// Supports pagination via ?page=1&limit=20 and filtering via ?category=&donor_name=
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM donations ORDER BY date DESC');
-    res.json(result.rows);
+    const { page, limit, category, donor_name } = req.query;
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 50));
+    const offset = (pageNum - 1) * limitNum;
+
+    let conditions = [];
+    let params = [];
+    let paramIdx = 1;
+
+    if (category) {
+      conditions.push(`category = $${paramIdx++}`);
+      params.push(category);
+    }
+    if (donor_name) {
+      conditions.push(`donor_name ILIKE $${paramIdx++}`);
+      params.push(`%${donor_name}%`);
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    // If no pagination params, return all records (legacy behaviour)
+    if (!page && !limit) {
+      const result = await pool.query(`SELECT * FROM donations ${whereClause} ORDER BY date DESC`, params);
+      return res.json(result.rows);
+    }
+
+    const dataParams = [...params, limitNum, offset];
+    const [dataResult, countResult] = await Promise.all([
+      pool.query(`SELECT * FROM donations ${whereClause} ORDER BY date DESC LIMIT $${paramIdx} OFFSET $${paramIdx + 1}`, dataParams),
+      pool.query(`SELECT COUNT(*) FROM donations ${whereClause}`, params)
+    ]);
+
+    const total = parseInt(countResult.rows[0].count);
+    res.json({
+      data: dataResult.rows,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum)
+      }
+    });
   } catch (err) {
     console.error('Error fetching donations:', err);
     res.status(500).json({ error: 'Failed to fetch donations' });
@@ -157,6 +199,14 @@ router.post('/ai-thank-you', async (req, res) => {
 - Date: ${date || 'recently'}`;
 
     const letter = await askAI(prompt, systemPrompt);
+    await saveAIResult(pool, {
+      user_id: req.user?.id,
+      feature: 'donation-thank-you',
+      input: req.body,
+      output: { letter },
+      raw_text: letter,
+      model: DEFAULT_MODEL,
+    });
     res.json({ letter });
   } catch (err) {
     console.error('Error generating thank you letter:', err);
