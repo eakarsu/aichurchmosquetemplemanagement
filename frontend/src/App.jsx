@@ -19,6 +19,7 @@ import AIResults from './pages/AIResults';
 import Notifications from './pages/Notifications';
 import Reports from './pages/Reports';
 import Webhooks from './pages/Webhooks';
+import CustomViewsPage from './pages/CustomViewsPage';
 import Layout from './components/Layout';
 
 function ProtectedRoute({ children }) {
@@ -52,6 +53,7 @@ function App() {
         <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
         <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
         <Route path="/webhooks" element={<ProtectedRoute><Webhooks /></ProtectedRoute>} />
+        <Route path="/custom-views" element={<ProtectedRoute><CustomViewsPage /></ProtectedRoute>} />
       </Routes>
     </div>
   );

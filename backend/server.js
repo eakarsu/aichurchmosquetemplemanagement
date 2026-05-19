@@ -59,6 +59,9 @@ app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/reports', require('./routes/reports'));
 app.use('/api/webhooks', require('./routes/webhooks'));
 
+// Custom Views (Faith Views) — 2 viz + 2 non-viz endpoints (mounted before 404 handler)
+app.use('/api/custom-views', require('./routes/customViews'));
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
@@ -78,6 +81,7 @@ app.use('/api/scripture-rag', require('./routes/sermonScriptureRag')); // apply 
 app.use('/api/worship-ops', require('./routes/worshipOpsStream')); // apply pass 6 — audit custom suggestion
 
 app.use('/api/denomination-white-label', require('./routes/denominationWhiteLabel')); // apply pass 6 — audit custom suggestion
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`CORS allowed origins: ${allowedOrigins.join(', ')}`);
