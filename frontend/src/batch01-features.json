@@ -1,0 +1,111 @@
+{
+  "project": "AIChurchMosqueTempleManagement",
+  "marker": "// === Batch 01 Gaps & Frontend Mounts ===",
+  "features": [
+    {
+      "slug": "agentic-engagement-coordinator-generating-personal",
+      "component": "AgenticEngagementCoordinatorGeneratingPersonalPage",
+      "label": "Agentic engagement coordinator generating personalized outreach (visit a newcomer, follow up on absent member)",
+      "endpoint": "/api/cf-agentic-engagement-coordinator-generating-personal",
+      "kind": "cfs"
+    },
+    {
+      "slug": "rag-over-sermon-archive-scripture-and-church-doctr",
+      "component": "RagOverSermonArchiveScriptureAndChurchDoctrPage",
+      "label": "RAG over sermon archive, scripture, and church doctrine documents for member Q&A",
+      "endpoint": "/api/cf-rag-over-sermon-archive-scripture-and-church-doctr",
+      "kind": "cfs"
+    },
+    {
+      "slug": "real-time-worship-service-operations-dashboard-av-",
+      "component": "RealTimeWorshipServiceOperationsDashboardAvPage",
+      "label": "Real-time worship-service operations dashboard (AV, livestream, attendance) with anomaly alerts",
+      "endpoint": "/api/cf-real-time-worship-service-operations-dashboard-av-",
+      "kind": "cfs"
+    },
+    {
+      "slug": "white-label-deployment-for-denominations-managing-",
+      "component": "WhiteLabelDeploymentForDenominationsManagingPage",
+      "label": "White-label deployment for denominations managing many congregations",
+      "endpoint": "/api/cf-white-label-deployment-for-denominations-managing-",
+      "kind": "cfs"
+    },
+    {
+      "slug": "no-ai-sermon-transcription-clip-generation-for-soc",
+      "component": "NoAiSermonTranscriptionClipGenerationForSocPage",
+      "label": "No AI sermon-transcription + clip generation for social",
+      "endpoint": "/api/gap-no-ai-sermon-transcription-clip-generation-for-soc",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-ai-live-translation-for-multilingual-congregati",
+      "component": "NoAiLiveTranslationForMultilingualCongregatiPage",
+      "label": "No AI live-translation for multilingual congregations",
+      "endpoint": "/api/gap-no-ai-live-translation-for-multilingual-congregati",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-ai-giving-pattern-fraud-anomaly-detection",
+      "component": "NoAiGivingPatternFraudAnomalyDetectionPage",
+      "label": "No AI giving-pattern fraud/anomaly detection",
+      "endpoint": "/api/gap-no-ai-giving-pattern-fraud-anomaly-detection",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-ai-prayer-request-triage-and-routing",
+      "component": "NoAiPrayerRequestTriageAndRoutingPage",
+      "label": "No AI prayer-request triage and routing",
+      "endpoint": "/api/gap-no-ai-prayer-request-triage-and-routing",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-ai-personalized-devotional-content-generation",
+      "component": "NoAiPersonalizedDevotionalContentGenerationPage",
+      "label": "No AI personalized devotional content generation",
+      "endpoint": "/api/gap-no-ai-personalized-devotional-content-generation",
+      "kind": "gap"
+    },
+    {
+      "slug": "notification-routes-exist-but-no-sms-push-delivery",
+      "component": "NotificationRoutesExistButNoSmsPushDeliveryPage",
+      "label": "Notification routes exist but no SMS-push delivery channel",
+      "endpoint": "/api/gap-notification-routes-exist-but-no-sms-push-delivery",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-export-reporting-for-tax-receipt-generation",
+      "component": "NoExportReportingForTaxReceiptGenerationPage",
+      "label": "No export/reporting for tax-receipt generation",
+      "endpoint": "/api/gap-no-export-reporting-for-tax-receipt-generation",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-direct-chms-api-client-planning-center-church-c",
+      "component": "NoDirectChmsApiClientPlanningCenterChurchCPage",
+      "label": "No direct ChMS API client (Planning Center, Church Community Builder)",
+      "endpoint": "/api/gap-no-direct-chms-api-client-planning-center-church-c",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-livestream-giving-page-integration",
+      "component": "NoLivestreamGivingPageIntegrationPage",
+      "label": "No livestream/giving page integration",
+      "endpoint": "/api/gap-no-livestream-giving-page-integration",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-mobile-app-for-members",
+      "component": "NoMobileAppForMembersPage",
+      "label": "No mobile app for members",
+      "endpoint": "/api/gap-no-mobile-app-for-members",
+      "kind": "gap"
+    },
+    {
+      "slug": "no-shift-swap-workflow-on-volunteer-scheduling",
+      "component": "NoShiftSwapWorkflowOnVolunteerSchedulingPage",
+      "label": "No shift-swap workflow on volunteer scheduling",
+      "endpoint": "/api/gap-no-shift-swap-workflow-on-volunteer-scheduling",
+      "kind": "gap"
+    }
+  ]
+}

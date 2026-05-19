@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, BookOpen, DollarSign, Users, Calendar,
   Heart, Star, Building, Bell, LogOut, Sparkles,
-  BarChart3, UsersRound, HeartHandshake, Globe
+  BarChart3, UsersRound, HeartHandshake, Globe, Brain, History, FileText, Zap, Eye
 } from 'lucide-react';
 
 const navItems = [
@@ -20,6 +20,12 @@ const navItems = [
   { path: '/small-groups', label: 'Small Groups', icon: UsersRound },
   { path: '/counseling', label: 'Counseling', icon: HeartHandshake },
   { path: '/outreach', label: 'Outreach', icon: Globe },
+  { path: '/ai-tools', label: 'AI Tools', icon: Brain },
+  { path: '/ai-results', label: 'AI History', icon: History },
+  { path: '/notifications', label: 'Notifications', icon: Bell },
+  { path: '/reports', label: 'Reports', icon: FileText },
+  { path: '/webhooks', label: 'Webhooks', icon: Zap },
+  { path: '/custom-views', label: 'Community Views', icon: Eye },
 ];
 
 function Layout({ children }) {

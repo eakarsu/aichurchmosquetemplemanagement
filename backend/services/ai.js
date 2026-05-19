@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 
 async function askAI(prompt, systemPrompt) {
   const apiKey = process.env.OPENROUTER_API_KEY;
-  const model = process.env.OPENROUTER_MODEL || 'openai/gpt-3.5-turbo';
+  const model = process.env.OPENROUTER_MODEL || 'anthropic/claude-3-5-sonnet-20241022';
 
   if (!apiKey) {
     throw new Error('OPENROUTER_API_KEY is not set in environment variables');
